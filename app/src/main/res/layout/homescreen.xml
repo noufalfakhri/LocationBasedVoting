@@ -11,19 +11,35 @@
         android:id="@+id/fl_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_navigation"/>
+        android:layout_above="@+id/bottom_navigation">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <!-- TODO: Update blank fragment layout -->
         <TextView
+            android:id="@+id/TitleHomescreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Home" />
-    </RelativeLayout>
-    
+            android:layout_marginTop="70dp"
+            android:layout_gravity="center_horizontal"
+            android:textSize="20dp"
+            android:text="Welcome To Polls"
+            android:textStyle="bold"/>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content">
+
+            <!-- TODO: Update blank fragment layout -->
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal" />
+
+        </RelativeLayout>
+    </FrameLayout>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"

@@ -88,7 +88,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // TODO Auto-generated method stub
-
+    //Create tables
         db.execSQL(createUsersQuery);
         db.execSQL(createPollQuery);
         db.execSQL(createResponseQuery);
@@ -127,14 +127,38 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(POLL_LAT, lat);
         contentValues.put(POLL_LAG, lag);
 
-        long result = db.insert(TABLE_USER,null,contentValues);
+        long result = db.insert(TABLE_POLL,null,contentValues);
         if(result == -1) return false;
 
         return true;
     }
 
 
-    //create answer left
+    public boolean createAnswer (String TextAnswer, int pollID  ){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ANSWER_TITLE, TextAnswer);
+        contentValues.put(ANSWER_POLL, pollID);
+
+        long result = db.insert(TABLE_ANSWER,null,contentValues);
+        if(result == -1) return false;
+
+        return true;
+    }
+
+    public boolean createResponse ( int pollID, int responderID, int answerID  ){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(RESPONSE_POLLID, pollID);
+        contentValues.put(POLL_RESPONDER, responderID);
+        contentValues.put(POLL_ANSWER, answerID);
+
+
+        long result = db.insert(TABLE_RESPONSE,null,contentValues);
+        if(result == -1) return false;
+
+        return true;
+    }
 
 
     }
