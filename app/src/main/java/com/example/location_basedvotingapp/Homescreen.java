@@ -221,8 +221,8 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
                 owners.add(polls.get(i).get(POLL_OWNER));
             }
 
-            pollTitles = titles;
-            pollOwners = owners;
+//            pollTitles = titles;
+//            pollOwners = owners;
 
         }
 
