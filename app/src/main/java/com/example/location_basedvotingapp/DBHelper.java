@@ -3,8 +3,12 @@ package com.example.location_basedvotingapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -48,10 +52,10 @@ public class DBHelper extends SQLiteOpenHelper {
             ("create table " + TABLE_POLL+ "("+POLL_ID+" INTEGER PRIMARY KEY AUTOINCREMENT," +
                     POLL_TITLE +" TEXT," +
                     POLL_OWNER +" INTEGER,"+
-                    POLL_LAT +" TEXT,"+
-                    POLL_LAG +" TEXT,"
+                    POLL_LAT +" REAL,"+
+                    POLL_LAG +" REAL,"
                     +" FOREIGN KEY ("+
-                    POLL_OWNER+") REFERENCES "+TABLE_USER+" ("+USER_ID+"), )");
+                    POLL_OWNER+") REFERENCES "+TABLE_USER+" ("+USER_ID+") )");
 
 
 // create response table > id / reponse poll / responder / answer
@@ -65,7 +69,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     +" FOREIGN KEY ("+
                     RESPONSE_POLLID+") REFERENCES "+TABLE_POLL+" ("+POLL_ID+"),"
                     +" FOREIGN KEY ("+
-                    POLL_ANSWER+") REFERENCES "+TABLE_ANSWER+" ("+ANSWER_ID+"),)");
+                    POLL_ANSWER+") REFERENCES "+TABLE_ANSWER+" ("+ANSWER_ID+"))");
 
 
     // create answer table > id / title / poll
@@ -93,6 +97,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(createPollQuery);
         db.execSQL(createResponseQuery);
         db.execSQL(createAnswerQuery);
+        System.out.println("in creating tables");
+
 
     }
 
@@ -119,13 +125,15 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean createPoll (String Title, int Owner , String lat , String lag ){
+    public boolean createPoll (String Title, int Owner , double lat , double lag ){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(POLL_TITLE, Title);
         contentValues.put(POLL_OWNER, Owner);
         contentValues.put(POLL_LAT, lat);
         contentValues.put(POLL_LAG, lag);
+        System.out.println("in creating polls");
+
 
         long result = db.insert(TABLE_POLL,null,contentValues);
         if(result == -1) return false;
@@ -158,6 +166,53 @@ public class DBHelper extends SQLiteOpenHelper {
         if(result == -1) return false;
 
         return true;
+    }
+
+
+    //This method returns only polls that are nearby and unvoted by user
+
+    public ArrayList<HashMap<String,String>> retrieveNearbyPolls(double lat , double lag, int user ){
+
+        ArrayList<HashMap<String,String>> polls = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res =  db.rawQuery(" SELECT * FROM "+TABLE_POLL+" ORDER BY ABS(("+lat+"-"+POLL_LAT+")*("+lat+"-"+POLL_LAT+")) + ABS(("+lag+"-"+POLL_LAG+")*("+lag+"-"+POLL_LAG+")) ASC",null);
+
+
+        System.out.println("in nearby polls");
+        res.moveToFirst();
+        while (res.isAfterLast()==false){
+
+           // if (res.getInt(res.getColumnIndex(POLL_RESPONDER)) != user)  // user has already voted for this poll
+
+                if(res.getString(res.getColumnIndex(POLL_ID)) != null) {// if poll exists
+
+
+                    HashMap< String, String> poll = new HashMap<>();
+                    String title = res.getString(res.getColumnIndex(POLL_TITLE));
+                    int owner = res.getInt(res.getColumnIndex(POLL_OWNER));
+
+                    poll.put(POLL_TITLE, title);
+                    poll.put(POLL_OWNER,"nouf");
+//                    poll.put(POLL_OWNER, getPollOwner(owner));
+
+
+                    polls.add(poll);
+
+            }
+            res.moveToNext();
+        }
+        return polls;
+    }
+
+
+    public String getPollOwner(int user){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res =  db.rawQuery(" SELECT "+USER_USERNAME+" FROM "+TABLE_USER+" WHERE "+USER_ID+"="+user+")",null);
+        res.moveToFirst();
+
+        String username = res.getString(res.getColumnIndex(USER_USERNAME));
+        return username;
+
     }
 
 

@@ -15,12 +15,15 @@ import java.util.ArrayList;
 // and implement the unimplemented methods
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     ArrayList pollTitle;
+    ArrayList pollOwner;
+
     Context context;
 
     // Constructor for initialization
-    public Adapter(Context context, ArrayList pollTitle) {
+    public Adapter(Context context, ArrayList pollTitle, ArrayList pollOwner) {
         this.context = context;
         this.pollTitle = pollTitle;
+        this.pollOwner = pollOwner;
     }
 
     @NonNull
@@ -39,8 +42,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull Adapter.ViewHolder holder, int position) {
         // TypeCast Object to int type
-
-        holder.text.setText((String) pollTitle.get(position));
+        holder.title.setText((String) pollTitle.get(position));
+        holder.owner.setText((String) pollOwner.get(position));
     }
 
     @Override
@@ -53,11 +56,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     // Initializing the Views
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView text;
+        TextView title;
+        TextView owner;
 
         public ViewHolder(View view) {
             super(view);
-            text = (TextView) view.findViewById(R.id.pollTitle);
+            title = (TextView) view.findViewById(R.id.pollTitle);
+            owner = (TextView) view.findViewById(R.id.pollOwner);
+
         }
     }
 }

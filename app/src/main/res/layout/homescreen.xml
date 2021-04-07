@@ -6,22 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".Homescreen">
 
-
     <FrameLayout
         android:id="@+id/fl_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_navigation">
 
-        <TextView
-            android:id="@+id/TitleHomescreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="70dp"
-            android:layout_gravity="center_horizontal"
-            android:textSize="20dp"
-            android:text="Welcome To Polls"
-            android:textStyle="bold"/>
+
 
 
         <RelativeLayout
@@ -35,9 +26,21 @@
                     android:id="@+id/recyclerView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="100dp"
+
                     android:layout_gravity="center_horizontal" />
 
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/TitleHomescreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="50dp"
+            android:text="Welcome To Polls"
+            android:textSize="20dp"
+            android:textStyle="bold" />
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
