@@ -5,9 +5,12 @@ package com.example.location_basedvotingapp;
 import android.Manifest;
 //import android.content.ContentValues;
 //import android.content.Intent;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
 //import android.database.Cursor;
 //import android.database.sqlite.SQLiteDatabase;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
@@ -31,6 +34,8 @@ public class AddPoll extends AppCompatActivity {
     private TextView answer1;
     private TextView answer2;
 
+    DBHelper db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,32 +51,45 @@ public class AddPoll extends AppCompatActivity {
 
 
         //DBHelper dbHelper = new DBHelper(this);
-
+        db = new DBHelper(this);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //check permission
-                System.out.println("1");
-                Log.i("ssd", "click");
 
-                System.out.println("question:"+ question.getText().toString());
-                System.out.println("Answer1:"+ answer1.getText().toString());
-                System.out.println("Answer2:"+ answer2.getText().toString());
+//                System.out.println("question:"+ question.getText().toString());
+//                System.out.println("Answer1:"+ answer1.getText().toString());
+//                System.out.println("Answer2:"+ answer2.getText().toString());
 
-//                SQLiteDatabase db = dbHelper.getWritableDatabase();
-//                ContentValues values = new ContentValues();
-//                values.put(DBHelper.POLL_ID, 1);
-//                values.put(DBHelper.POLL_TITLE, question.getText().toString());
-//                values.put(DBHelper.POLL_OWNER, 1);
-//                values.put(DBHelper.POLL_LAT, "-122.3234322");
-//                values.put(DBHelper.POLL_LAG, "37.3234322");
-//                values.put(DBHelper.POLL_ANSWER1, answer1.getText().toString());
-//                values.put(DBHelper.POLL_ANSWER2, answer2.getText().toString());
-//
-//                long newRowId = db.insert(DBHelper.TABLE_POLL, null, values);
 
-//                Cursor cursorCourses = db.rawQuery("SELECT * FROM " + "Poll", null);
-//                System.out.println(cursorCourses.getColumnIndex("POLL_TITLE"));
+
+                SQLiteDatabase database = db.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put(db.POLL_ID, 3);
+                values.put(db.POLL_TITLE, question.getText().toString());
+                values.put(db.POLL_OWNER, 1);
+                values.put(db.POLL_LAT, "-122.3234322");
+                values.put(db.POLL_LAG, "37.3234322");
+                values.put(db.POLL_ANSWER1, answer1.getText().toString());
+                values.put(db.POLL_ANSWER2, answer2.getText().toString());
+
+                long newRowId = database.insert(DBHelper.TABLE_POLL, null, values);
+
+                Cursor cursorCourses = database.rawQuery("SELECT * FROM " + "Poll", null);
+                System.out.println("here");
+               // System.out.println(cursorCourses.getString(5));
+
+                if (cursorCourses.getCount()==0){
+                    System.out.println("NO DATA");
+                } else {
+                    while (cursorCourses.moveToNext()){
+                        System.out.println("Question: " + cursorCourses.getString(1));
+                        System.out.println("lat: " + cursorCourses.getString(3));
+                        System.out.println("long: " + cursorCourses.getString(4));
+                        System.out.println("answer1: " + cursorCourses.getString(5));
+                        System.out.println("answer2: " + cursorCourses.getString(6));
+                    }
+                }
 
             }
         });

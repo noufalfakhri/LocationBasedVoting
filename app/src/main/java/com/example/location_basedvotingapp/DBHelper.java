@@ -26,6 +26,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String POLL_OWNER = "OWNER";
     public static final String POLL_LAT = "LAT";
     public static final String POLL_LAG = "LAG";
+    public static final String POLL_ANSWER1 = "ANSWER1";
+    public static final String POLL_ANSWER2 = "ANSWER2";
 
     public static final String TABLE_RESPONSE = "Response";
     public static final String RESPONSE_ID = "ID";
@@ -53,7 +55,9 @@ public class DBHelper extends SQLiteOpenHelper {
                     POLL_TITLE +" TEXT," +
                     POLL_OWNER +" INTEGER,"+
                     POLL_LAT +" REAL,"+
-                    POLL_LAG +" REAL,"
+                    POLL_LAG +" REAL,"+
+                    POLL_ANSWER1 +" TEXT,"+
+                    POLL_ANSWER2 +" TEXT,"
                     +" FOREIGN KEY ("+
                     POLL_OWNER+") REFERENCES "+TABLE_USER+" ("+USER_ID+") )");
 
