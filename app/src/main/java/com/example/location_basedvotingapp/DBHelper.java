@@ -17,6 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_USER = "Users";
     public static final String USER_ID = "ID";
     public static final String USER_USERNAME = "USERNAME";
+    public static final String USER_EMAIL = "EMAIL";
     public static final String USER_PASSWORD = "PASSWORD";
 
 
@@ -45,11 +46,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // create user table > id / username / password
     public static final String createUsersQuery =
-            ("create table " + TABLE_USER+ "("+USER_ID+" INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    USER_USERNAME +" TEXT," +
-                    USER_PASSWORD+" TEXT)");
+            ("create table " + TABLE_USER + "(" + USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + USER_USERNAME + " TEXT," + USER_EMAIL + " TEXT," + USER_PASSWORD + " TEXT)");
 
-// create poll table > id / title / poll owner / poll location: lat/lag
+
+    // create poll table > id / title / poll owner / poll location: lat/lag
     public static final String createPollQuery =
             ("create table " + TABLE_POLL+ "("+POLL_ID+" INTEGER PRIMARY KEY AUTOINCREMENT," +
                     POLL_TITLE +" TEXT," +
@@ -115,10 +115,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean registerUser (String Username, String Password){
+    public boolean registerUser(String Username, String Email, String Password) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(USER_USERNAME, Username);
+        contentValues.put(USER_EMAIL, Email);
         contentValues.put(USER_PASSWORD, Password);
 
 
@@ -128,7 +129,44 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean isEmailFound(String Email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select " + USER_EMAIL + " from " + TABLE_USER, null);
+        String existEmail;
+        if (cursor.moveToFirst()) {
+            do {
+                existEmail = cursor.getString(0);
+                if (existEmail.equals(Email)) {
+                    return true;
+                }
+            } while (cursor.moveToNext());
+        }
+        return false;
+    }
 
+    public void resetPassword(String Email, String Password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE " + TABLE_USER + " SET " + USER_PASSWORD + " = ?" + " WHERE " + USER_EMAIL + " = ?", new Object[]{Password, Email});
+        db.close();
+    }
+
+    public boolean checkEmailAndPassword(String Email, String Password) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery("select * from " + TABLE_USER + " where " + USER_EMAIL + "=?" + " and " + USER_PASSWORD + "=?", new String[]{Email, Password});
+        if (cursor.getCount() > 0)
+            return true;
+        else
+            return false;
+    }
+
+
+
+
+
+
+
+
+//
     public boolean createPoll (String Title, int Owner , double lat , double lag ){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
