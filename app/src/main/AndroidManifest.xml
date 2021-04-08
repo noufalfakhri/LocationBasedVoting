@@ -31,6 +31,7 @@
         </activity>
         <activity android:name=".Homescreen" />
         <activity android:name=".Register" />
+        <activity android:name=".AddPoll" />
 
     </application>
 

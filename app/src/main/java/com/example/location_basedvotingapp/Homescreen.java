@@ -57,8 +57,8 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homescreen);
 
-        checkLocationPermission();
-        setUserLocation();
+        //checkLocationPermission();
+       // setUserLocation();
         getPolls();
         setList();
         BottomNavigation();
