@@ -125,7 +125,7 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
                        // String provider = locationManager.getBestProvider(new Criteria(), false);
 
                         //Request location updates:
-                        locationManager.requestLocationUpdates(null, 400, 1, this);
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 400, 1, this);
                     }
 
                 } else {
