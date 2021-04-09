@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,8 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static com.example.location_basedvotingapp.DBHelper.POLL_ID;
 import static com.example.location_basedvotingapp.DBHelper.POLL_OWNER;
 import static com.example.location_basedvotingapp.DBHelper.POLL_TITLE;
+import static com.example.location_basedvotingapp.DBHelper.USER_ID;
 
 public class PollActivity extends AppCompatActivity {
 
@@ -103,7 +106,11 @@ public class PollActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setList();
+        try {
+            setList();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     void getPolls() throws IOException {
@@ -125,7 +132,7 @@ public class PollActivity extends AppCompatActivity {
 
     }
 
-    void setList() {
+    void setList() throws IOException {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         // Setting the layout as linear
         // layout for vertical orientation
@@ -139,6 +146,40 @@ public class PollActivity extends AppCompatActivity {
 
         // Setting Adapter to RecyclerView
         recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        Toast.makeText(PollActivity.this,"ok" , Toast.LENGTH_LONG).show();
+                        TextView titleText  = (TextView) view.findViewById(R.id.pollTitle);
+                        String title = titleText.getText().toString();
+
+                        TextView ownerText  = (TextView) view.findViewById(R.id.pollOwner);
+                        String owner = titleText.getText().toString();
+                        System.out.println(owner);
+
+
+                        int id = db.getPollId(title);
+
+
+
+                        if (id!=-1){
+                            Intent intent = new Intent(PollActivity.this, votePoll.class);
+                            intent.putExtra(POLL_ID,id);
+                            intent.putExtra(USER_ID,userID);
+                            startActivity(intent);
+
+                        }
+                        else
+                            Toast.makeText(PollActivity.this,"Poll not available" , Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                }));
+
+        adapter.notifyDataSetChanged();
     }
 }
 
