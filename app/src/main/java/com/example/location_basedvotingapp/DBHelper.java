@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Geocoder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -157,13 +158,15 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public boolean checkEmailAndPassword(String Email, String Password) {
+    public int checkEmailAndPassword(String Email, String Password) {
         SQLiteDatabase database = this.getReadableDatabase();
+        int result = -1;
         Cursor cursor = database.rawQuery("select * from " + TABLE_USER + " where " + USER_EMAIL + "=?" + " and " + USER_PASSWORD + "=?", new String[]{Email, Password});
-        if (cursor.getCount() > 0)
-            return true;
-        else
-            return false;
+        cursor.moveToFirst();
+        result = cursor.getInt(cursor.getColumnIndex(USER_ID));
+        System.out.println("User ID = "+result);
+
+        return  result;
     }
 
 
@@ -220,7 +223,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //This method returns only polls that are nearby and unvoted by user
 
-    public ArrayList<HashMap<String,String>> retrieveNearbyPolls(double lat , double lag, int user ){
+    public ArrayList<HashMap<String,String>> retrieveNearbyPolls(double lat , double lag ){
 
         ArrayList<HashMap<String,String>> polls = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
@@ -241,8 +244,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     int owner = res.getInt(res.getColumnIndex(POLL_OWNER));
 
                     poll.put(POLL_TITLE, title);
-                    poll.put(POLL_OWNER,"nouf");
-//                    poll.put(POLL_OWNER, getPollOwner(owner));
+                   // poll.put(POLL_OWNER,"nouf");
+                    poll.put(POLL_OWNER, getPollOwner(owner));
 
 
                     polls.add(poll);
@@ -254,9 +257,10 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+
     public String getPollOwner(int user){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res =  db.rawQuery(" SELECT "+USER_USERNAME+" FROM "+TABLE_USER+" WHERE "+USER_ID+"="+user+")",null);
+        Cursor res =  db.rawQuery(" SELECT "+USER_USERNAME+" FROM "+TABLE_USER+" WHERE "+USER_ID+"="+user,null);
         res.moveToFirst();
 
         String username = res.getString(res.getColumnIndex(USER_USERNAME));

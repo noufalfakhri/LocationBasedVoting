@@ -17,11 +17,15 @@ public class PollActivity extends AppCompatActivity {
 
     private TextView mTextView;
     Button buttonView;
+    int userID = 0;
     public static final int msg_request = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll);
+
+        Bundle extras = getIntent().getExtras();
+        userID = extras.getInt("userID");
 
         mTextView = (TextView) findViewById(R.id.text);
         buttonView = (Button) findViewById(R.id.button);
@@ -31,14 +35,18 @@ public class PollActivity extends AppCompatActivity {
         nav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+                Intent intent;
                 switch (item.getItemId()){
                     case R.id.home:
-                        startActivity(new Intent(getApplicationContext(), Homescreen.class));
+                        intent = new Intent(getApplicationContext(), Homescreen.class);
+                        intent.putExtra("userID", userID);
+                        startActivity(intent);
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.Settings:
-                        startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                        intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        intent.putExtra("userID", userID);
+                        startActivity(intent);
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.Polls:
@@ -52,6 +60,7 @@ public class PollActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.i("ssd", "onClick: Add poll");
                 Intent intent = new Intent (getApplicationContext() , AddPoll.class);
+                intent.putExtra("userID", userID);
                 // Bundle dataBundle = new Bundle();
                 // dataBundle.putInt("id", 0);
                 // intent.putExtras(dataBundle);

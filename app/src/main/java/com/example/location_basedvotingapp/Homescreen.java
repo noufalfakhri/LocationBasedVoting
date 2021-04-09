@@ -7,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -27,9 +29,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import static com.example.location_basedvotingapp.DBHelper.POLL_OWNER;
 import static com.example.location_basedvotingapp.DBHelper.POLL_TITLE;
@@ -56,6 +61,9 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homescreen);
+
+        Bundle extras = getIntent().getExtras();
+        userID = extras.getInt("userID");
 
         //checkLocationPermission();
        // setUserLocation();
@@ -171,16 +179,20 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
             nav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+                    Intent intent;
                     switch (item.getItemId()){
                         case R.id.home:
                             return true;
                         case R.id.Settings:
-                            startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                            intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                            intent.putExtra("userID", userID);
+                            startActivity(intent);
                             overridePendingTransition(0,0);
                             return true;
                         case R.id.Polls:
-                            startActivity(new Intent(getApplicationContext(), PollActivity.class));
+                             intent = new Intent(getApplicationContext(), PollActivity.class);
+                            intent.putExtra("userID", userID);
+                            startActivity(intent);
                             overridePendingTransition(0,0);
                             return true;
                     }
@@ -211,7 +223,7 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
             db = new DBHelper(this);
 
 
-            ArrayList<HashMap<String, String>> polls = db.retrieveNearbyPolls(lat, lag, 123);
+            ArrayList<HashMap<String, String>> polls = db.retrieveNearbyPolls(lat, lag);
 
             ArrayList<String> titles = new ArrayList<String>();
             ArrayList<String> owners = new ArrayList<String>();
@@ -221,8 +233,8 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
                 owners.add(polls.get(i).get(POLL_OWNER));
             }
 
-//            pollTitles = titles;
-//            pollOwners = owners;
+            pollTitles = titles;
+            pollOwners = owners;
 
         }
 
@@ -234,5 +246,25 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
     System.out.println(lat+" latitude");
         System.out.println(lag+" longitude");
 
+        try {
+            System.out.println(retrieveAddressLine(0,lat,lag));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public String retrieveAddressLine(int pollId, double lat, double lag ) throws IOException {
+
+        //get poll coordinates
+
+        Geocoder myLocation = new Geocoder(this, Locale.getDefault());
+        List<Address> myList = myLocation.getFromLocation(24.683815,46.667077, 1);
+        Address address = (Address) myList.get(0);
+        String addressStr = "";
+        addressStr += address.getSubLocality() ;
+
+
+        return addressStr;
     }
 }

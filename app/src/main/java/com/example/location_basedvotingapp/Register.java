@@ -94,7 +94,7 @@ public class Register extends AppCompatActivity {
                 if (!dbHelper.isEmailFound(edit_email.getText().toString())) {
                     dbHelper.registerUser(edit_name.getText().toString(), edit_email.getText().toString(), edit_password.getText().toString());
                     Toast.makeText(Register.this, "طھظ… طھط³ط¬ظٹظ„ ط§ظ„ط­ط³ط§ط¨ ط¨ظ†ط¬ط§ط­", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(Register.this, MainActivity.class));
+                    startActivity(new Intent(Register.this, Homescreen.class));
                     finish();
                 } else {
                     Toast.makeText(Register.this, "ظ‡ط°ط§ ط§ظ„ط­ط³ط§ط¨ ظ…ط³ط¬ظ„ ظ…ط³ط¨ظ‚ط§ظ‹", Toast.LENGTH_LONG).show();

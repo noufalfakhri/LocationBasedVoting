@@ -46,6 +46,7 @@ public class AddPoll extends AppCompatActivity {
 
     private TextView dateView;
     private TextView timeView;
+    int userID =0;
 
     private int year, month, day, hour ,min;
     private Calendar calendar;
@@ -60,6 +61,7 @@ public class AddPoll extends AppCompatActivity {
         question = (TextView) findViewById(R.id.question);
         answer1 = (TextView) findViewById(R.id.answer1);
         answer2 = (TextView) findViewById(R.id.answer2);
+
 
         dateView = (TextView) findViewById(R.id.dateView);
         timeView = (TextView) findViewById(R.id.timeView);
@@ -76,6 +78,10 @@ public class AddPoll extends AppCompatActivity {
         showTime(hour, min);
         showDate(year, month+1, day);
 
+        Bundle extras = getIntent().getExtras();
+        userID = extras.getInt("userID");
+
+
         //DBHelper dbHelper = new DBHelper(this);
         db = new DBHelper(this);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -89,9 +95,13 @@ public class AddPoll extends AppCompatActivity {
 
                 SQLiteDatabase database = db.getWritableDatabase();
                 ContentValues values = new ContentValues();
-                values.put(db.POLL_ID, db.numberOfPollRows() +1);
+//<<<<<<< Updated upstream
+//                values.put(db.POLL_ID, db.numberOfPollRows() +1);
+//=======
+//
+//>>>>>>> Stashed changes
                 values.put(db.POLL_TITLE, question.getText().toString());
-                values.put(db.POLL_OWNER, 1);
+                values.put(db.POLL_OWNER, userID);
                 values.put(db.POLL_LAT, "-122.3234322");
                 values.put(db.POLL_LAG, "37.3234322");
                 values.put(db.POLL_ANSWER1, answer1.getText().toString());
@@ -118,6 +128,7 @@ public class AddPoll extends AppCompatActivity {
                     }
                 }
 
+                finish();
             }
         });
 
