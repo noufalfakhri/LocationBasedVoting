@@ -61,9 +61,7 @@ public class PollActivity extends AppCompatActivity {
                 Log.i("ssd", "onClick: Add poll");
                 Intent intent = new Intent (getApplicationContext() , AddPoll.class);
                 intent.putExtra("userID", userID);
-                // Bundle dataBundle = new Bundle();
-                // dataBundle.putInt("id", 0);
-                // intent.putExtras(dataBundle);
+
                 startActivityForResult(intent, msg_request);
 
             }
