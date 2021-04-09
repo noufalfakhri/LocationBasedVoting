@@ -13,6 +13,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -65,8 +67,8 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
         Bundle extras = getIntent().getExtras();
         userID = extras.getInt("userID");
 
-        //checkLocationPermission();
-       // setUserLocation();
+        checkLocationPermission();
+        setUserLocation();
         getPolls();
         setList();
         BottomNavigation();
@@ -147,9 +149,9 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
         }
     }
 
-
     void setUserLocation() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -160,10 +162,12 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
-        lat=locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
-        lag= locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
+        lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
+        lag = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
+
         System.out.println(" longitude IS "+lag);
 
         System.out.println("last known location: "+locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
@@ -240,7 +244,8 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
 
     @Override
          public void onLocationChanged(@NonNull Location location) {
-    lat = location.getLatitude();
+
+        lat = location.getLatitude();
     lag = location.getLongitude();
 
     System.out.println(lat+" latitude");
