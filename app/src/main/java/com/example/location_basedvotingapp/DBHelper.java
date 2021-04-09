@@ -7,10 +7,16 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import android.location.Address;
+
 import android.location.Geocoder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -94,10 +100,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
-
+ Context context;
     public DBHelper(Context context) {
         super(context, DATABASE_NAME , null, 1);
         SQLiteDatabase db = this.getWritableDatabase();
+        context = context;
     }
 
     @Override
@@ -272,13 +279,60 @@ public class DBHelper extends SQLiteOpenHelper {
         int numRows = (int) DatabaseUtils.queryNumEntries(db, TABLE_POLL);
         return numRows;
     }
-//
-//    public int numberOfUserRows(){
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        int numRows = (int) DatabaseUtils.queryNumEntries(db, TABLE_USER);
-//        return numRows;
-//    }
 
+
+
+    public ArrayList<HashMap<String,String>> retrieveUserPolls(int userID ) throws IOException {
+
+        ArrayList<HashMap<String,String>> polls = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res =  db.rawQuery(" SELECT * FROM "+TABLE_POLL+" WHERE "+POLL_OWNER+" = "+userID+"",null);
+
+
+        System.out.println("in users own polls");
+        res.moveToFirst();
+        while (res.isAfterLast()==false){
+
+            // if (res.getInt(res.getColumnIndex(POLL_RESPONDER)) != user)  // user has already voted for this poll
+
+            if(res.getString(res.getColumnIndex(POLL_ID)) != null) {// if poll exists
+
+
+                HashMap< String, String> poll = new HashMap<>();
+                String title = res.getString(res.getColumnIndex(POLL_TITLE));
+
+                double lat = res.getDouble(res.getColumnIndex(POLL_LAT));
+                double lag = res.getDouble(res.getColumnIndex(POLL_LAG));
+
+                String location = retrieveAddressLine(lat/100000,lag);
+                poll.put(POLL_TITLE, title);
+
+                poll.put(POLL_OWNER, location);
+
+
+                polls.add(poll);
+
+            }
+            res.moveToNext();
+        }
+        return polls;
     }
+
+    public String retrieveAddressLine( double lat, double lag ) throws IOException {
+
+        //get poll coordinates
+
+        Geocoder myLocation = new Geocoder(context, Locale.getDefault());
+        List<Address> myList = myLocation.getFromLocation(lat,lag, 1);
+        Address address = (Address) myList.get(0);
+        String addressStr = "";
+        addressStr += address.getSubLocality() ;
+
+
+        return addressStr;
+    }
+
+
+}
 
 

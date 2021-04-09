@@ -95,11 +95,7 @@ public class AddPoll extends AppCompatActivity {
 
                 SQLiteDatabase database = db.getWritableDatabase();
                 ContentValues values = new ContentValues();
-//<<<<<<< Updated upstream
-//                values.put(db.POLL_ID, db.numberOfPollRows() +1);
-//=======
-//
-//>>>>>>> Stashed changes
+
                 values.put(db.POLL_TITLE, question.getText().toString());
                 values.put(db.POLL_OWNER, userID);
                 values.put(db.POLL_LAT, "-122.3234322");
