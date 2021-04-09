@@ -4,6 +4,7 @@ package com.example.location_basedvotingapp;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -29,6 +30,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String POLL_LAG = "LAG";
     public static final String POLL_ANSWER1 = "ANSWER1";
     public static final String POLL_ANSWER2 = "ANSWER2";
+    public static final String POLL_TIME = "TIME";
+    public static final String POLL_DATE = "DATE";
+
 
     public static final String TABLE_RESPONSE = "Response";
     public static final String RESPONSE_ID = "ID";
@@ -57,7 +61,9 @@ public class DBHelper extends SQLiteOpenHelper {
                     POLL_LAT +" REAL,"+
                     POLL_LAG +" REAL,"+
                     POLL_ANSWER1 +" TEXT,"+
-                    POLL_ANSWER2 +" TEXT,"
+                    POLL_ANSWER2 +" TEXT,"+
+                    POLL_TIME +" TEXT,"+
+                    POLL_DATE +" TEXT,"
                     +" FOREIGN KEY ("+
                     POLL_OWNER+") REFERENCES "+TABLE_USER+" ("+USER_ID+") )");
 
@@ -121,6 +127,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(USER_USERNAME, Username);
         contentValues.put(USER_EMAIL, Email);
         contentValues.put(USER_PASSWORD, Password);
+
 
 
         long result = db.insert(TABLE_USER,null,contentValues);
@@ -256,7 +263,17 @@ public class DBHelper extends SQLiteOpenHelper {
         return username;
 
     }
-
+    public int numberOfPollRows(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        int numRows = (int) DatabaseUtils.queryNumEntries(db, TABLE_POLL);
+        return numRows;
+    }
+//
+//    public int numberOfUserRows(){
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        int numRows = (int) DatabaseUtils.queryNumEntries(db, TABLE_USER);
+//        return numRows;
+//    }
 
     }
 
