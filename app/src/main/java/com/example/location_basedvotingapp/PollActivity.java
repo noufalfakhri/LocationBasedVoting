@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ public class PollActivity extends AppCompatActivity {
 
     private TextView mTextView;
     Button buttonView;
+
 
     RecyclerView recyclerView;
     DBHelper db;
@@ -39,12 +41,17 @@ public class PollActivity extends AppCompatActivity {
     ArrayList pollOwners = new ArrayList<>(Arrays.asList("Nouf", "Hessa", "Hessa", "Reema", "Ghada",
             "Hessa", "Reem", "Hessa"));
 
+    int userID = 0;
+
     public static final int msg_request = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll);
+
+        Bundle extras = getIntent().getExtras();
+        userID = extras.getInt("userID");
 
         mTextView = (TextView) findViewById(R.id.text);
         buttonView = (Button) findViewById(R.id.button);
@@ -56,13 +63,19 @@ public class PollActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                switch (item.getItemId()) {
+                Intent intent;
+                switch (item.getItemId()){
                     case R.id.home:
-                        startActivity(new Intent(getApplicationContext(), Homescreen.class));
-                        overridePendingTransition(0, 0);
+                        intent = new Intent(getApplicationContext(), Homescreen.class);
+                        intent.putExtra("userID", userID);
+                        startActivity(intent);
+                        overridePendingTransition(0,0);
+
                         return true;
                     case R.id.Settings:
-                        startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                        intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        intent.putExtra("userID", userID);
+                        startActivity(intent);
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.Polls:
@@ -75,26 +88,30 @@ public class PollActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.i("ssd", "onClick: Add poll");
-                Intent intent = new Intent(getApplicationContext(), AddPoll.class);
-                // Bundle dataBundle = new Bundle();
-                // dataBundle.putInt("id", 0);
-                // intent.putExtras(dataBundle);
+
+                Intent intent = new Intent (getApplicationContext() , AddPoll.class);
+                intent.putExtra("userID", userID);
+
                 startActivityForResult(intent, msg_request);
 
             }
         });
 
-        // getPolls();
-        // setList();
+        try {
+            getPolls();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        setList();
     }
 
-    void getPolls() {
+    void getPolls() throws IOException {
         System.out.println("in getting polls");
 
         db = new DBHelper(this);
 
 
-        ArrayList<HashMap<String, String>> polls = db.retrieveNearbyPolls(-122.3234322, 37.3234322, 1);
+        ArrayList<HashMap<String, String>> polls = db.retrieveUserPolls(userID);
 
 
         for (int i = 0; i < polls.size(); i++) {
@@ -102,8 +119,8 @@ public class PollActivity extends AppCompatActivity {
             owners.add(polls.get(i).get(POLL_OWNER));
         }
 
-//            pollTitles = titles;
-//            pollOwners = owners;
+            pollTitles = titles;
+            pollOwners = owners;
 
     }
 

@@ -67,8 +67,11 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 text_input_layout_2.setHelperText("");
-                if (dbHelper.checkEmailAndPassword(edit_email.getText().toString(), edit_password.getText().toString())) {
-                    startActivity(new Intent(MainActivity.this, Homescreen.class));
+                int userID = dbHelper.checkEmailAndPassword(edit_email.getText().toString(), edit_password.getText().toString());
+                if (userID != -1) {
+                    Intent intent = new Intent(MainActivity.this, Homescreen.class);
+                    intent.putExtra("userID", userID);
+                    startActivity(intent);
                     finish();
                 } else {
                     Toast.makeText(MainActivity.this, "Email Or Password Is Wrong", Toast.LENGTH_LONG).show();

@@ -15,6 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class SettingsActivity extends AppCompatActivity {
 
     Button signOut ;
+    int userID=0;
     private TextView mTextView;
 
     @Override
@@ -41,16 +42,20 @@ public class SettingsActivity extends AppCompatActivity {
         nav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+                Intent intent;
                 switch (item.getItemId()){
                     case R.id.home:
-                        startActivity(new Intent(getApplicationContext(), Homescreen.class));
+                        intent = new Intent(getApplicationContext(), Homescreen.class);
+                        intent.putExtra("userID", userID);
+                        startActivity(intent);
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.Settings:
                         return true;
                     case R.id.Polls:
-                        startActivity(new Intent(getApplicationContext(), PollActivity.class));
+                        intent = new Intent(getApplicationContext(), PollActivity.class);
+                        intent.putExtra("userID", userID);
+                        startActivity(intent);
                         overridePendingTransition(0,0);
                         return true;
                 }
