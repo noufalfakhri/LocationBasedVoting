@@ -1,7 +1,6 @@
 package com.example.location_basedvotingapp;
 
 
-
 import android.Manifest;
 //import android.content.ContentValues;
 //import android.content.Intent;
@@ -9,6 +8,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.pm.PackageManager;
 //import android.database.Cursor;
 //import android.database.sqlite.SQLiteDatabase;
@@ -16,6 +16,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -44,12 +46,17 @@ public class AddPoll extends AppCompatActivity {
     private DatePicker datePicker;
     private TimePicker timePicker;
 
+    protected LocationManager locationManager;
+    protected LocationListener locationListener;
+    double lat, lag;
+
     private TextView dateView;
     private TextView timeView;
-    int userID =0;
+    int userID = 0;
 
-    private int year, month, day, hour ,min;
+    private int year, month, day, hour, min;
     private Calendar calendar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,11 +83,26 @@ public class AddPoll extends AppCompatActivity {
         hour = calendar.get(Calendar.HOUR_OF_DAY);
         min = calendar.get(Calendar.MINUTE);
         showTime(hour, min);
-        showDate(year, month+1, day);
+        showDate(year, month + 1, day);
 
         Bundle extras = getIntent().getExtras();
         userID = extras.getInt("userID");
 
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
+        lag = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
 
         //DBHelper dbHelper = new DBHelper(this);
         db = new DBHelper(this);
@@ -89,17 +111,14 @@ public class AddPoll extends AppCompatActivity {
             public void onClick(View view) {
                 //check permission
 
-//                System.out.println("question:"+ question.getText().toString());
-//                System.out.println("Answer1:"+ answer1.getText().toString());
-//                System.out.println("Answer2:"+ answer2.getText().toString());
 
                 SQLiteDatabase database = db.getWritableDatabase();
                 ContentValues values = new ContentValues();
 
                 values.put(db.POLL_TITLE, question.getText().toString());
                 values.put(db.POLL_OWNER, userID);
-                values.put(db.POLL_LAT, "-122.3234322");
-                values.put(db.POLL_LAG, "37.3234322");
+                values.put(db.POLL_LAT, lat);
+                values.put(db.POLL_LAG,lag);
                 values.put(db.POLL_ANSWER1, answer1.getText().toString());
                 values.put(db.POLL_ANSWER2, answer2.getText().toString());
                 values.put(db.POLL_TIME, timeView.getText().toString());

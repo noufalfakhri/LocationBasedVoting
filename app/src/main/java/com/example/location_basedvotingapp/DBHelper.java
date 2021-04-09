@@ -243,7 +243,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
            // if (res.getInt(res.getColumnIndex(POLL_RESPONDER)) != user)  // user has already voted for this poll
 
-                if(res.getString(res.getColumnIndex(POLL_ID)) != null) {// if poll exists
+                if(res.getInt(res.getColumnIndex(POLL_ID)) != -1) {// if poll exists
 
 
                     HashMap< String, String> poll = new HashMap<>();
