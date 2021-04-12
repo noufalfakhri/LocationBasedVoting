@@ -251,7 +251,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     int owner = res.getInt(res.getColumnIndex(POLL_OWNER));
 
                     poll.put(POLL_TITLE, title);
-                   // poll.put(POLL_OWNER,"nouf");
                     poll.put(POLL_OWNER, getPollOwner(owner));
 
 
@@ -376,6 +375,11 @@ public class DBHelper extends SQLiteOpenHelper {
         results.put(2,answer2Result);
 
         return results;
+    }
+
+    public Integer deletePoll (int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_POLL, POLL_ID+ " = " +id,null);
     }
 
 

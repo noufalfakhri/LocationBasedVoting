@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import static com.example.location_basedvotingapp.DBHelper.POLL_ANSWER1;
 import static com.example.location_basedvotingapp.DBHelper.POLL_ANSWER2;
 import static com.example.location_basedvotingapp.DBHelper.POLL_ID;
+import static com.example.location_basedvotingapp.DBHelper.POLL_OWNER;
 import static com.example.location_basedvotingapp.DBHelper.POLL_RESPONDER;
 import static com.example.location_basedvotingapp.DBHelper.POLL_TITLE;
 import static com.example.location_basedvotingapp.DBHelper.RESPONSE_POLLID;
@@ -40,6 +42,7 @@ public class votePoll extends AppCompatActivity {
     HashMap<Integer,Integer> results;
     Button submit;
     Button goBack;
+    ImageView delete;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +53,8 @@ public class votePoll extends AppCompatActivity {
         userID = extras.getInt(USER_ID);
         pollID = extras.getInt(POLL_ID);
 
+        System.out.println(pollID +"< in create");
+
         pollTitle = (TextView) findViewById(R.id.pollQuestion);
         screenTitle = (TextView) findViewById(R.id.votePollTitle);
 
@@ -57,16 +62,23 @@ public class votePoll extends AppCompatActivity {
         answer2 = (RadioButton) findViewById(R.id.answer2);
         submit = (Button) findViewById(R.id.submitButton) ;
         goBack = (Button) findViewById(R.id.backButton) ;
+        delete = (ImageView)  findViewById(R.id.deleteView);
         radioGroup = (RadioGroup) findViewById(R.id.answerGroup);
         voteResult1 = (TextView) findViewById(R.id.voteResult1);
         voteResult2 = (TextView) findViewById(R.id.voteResult2);
         voteResult1.setVisibility(View.GONE);
         voteResult2.setVisibility(View.GONE);
-        goBack.setVisibility(View.GONE);
+        delete.setVisibility((View.GONE));
 
 
         getPoll();
         hasAlreadyVoted();
+
+        if ( hasAlreadyVoted()|| userIsOwner())
+            showResults();
+
+
+
         goBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,10 +96,32 @@ public class votePoll extends AppCompatActivity {
             }
         });
 
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            db.deletePoll(pollID);
+            finish();
+            }
+        });
+
+    }
+
+    private boolean userIsOwner() {
+       boolean isOwner = false;
+
+        SQLiteDatabase db_ = db.getWritableDatabase();
+        Cursor res =  db_.rawQuery("  SELECT * FROM "+TABLE_POLL+" WHERE "+POLL_ID+" = "+pollID+" AND "+POLL_OWNER+" = "+userID,null);
+        if (res != null || res.getCount() >0) {
+            isOwner = true;
+            delete.setVisibility(View.VISIBLE);
+        }
+
+
+       return isOwner;
     }
 
     private void getPoll() {
-
+        System.out.println("poll id = "+pollID);
         SQLiteDatabase db_ = db.getWritableDatabase();
         Cursor res =  db_.rawQuery("  SELECT * FROM "+TABLE_POLL+" WHERE "+POLL_ID+" = "+pollID+"",null);
 
@@ -95,7 +129,9 @@ public class votePoll extends AppCompatActivity {
            res.moveToFirst();
 
            String title = res.getString(res.getColumnIndex(POLL_TITLE));
-           String A1 = res.getString(res.getColumnIndex(POLL_ANSWER1));
+            System.out.println("poll title = "+title);
+
+            String A1 = res.getString(res.getColumnIndex(POLL_ANSWER1));
            String A2 = res.getString(res.getColumnIndex(POLL_ANSWER2));
 
            System.out.println(A1);
@@ -117,24 +153,27 @@ public class votePoll extends AppCompatActivity {
 
         if (res.getCount() >0) {
             voted = true;
+        }
             results = db.getPollResult(pollID);
             System.out.println(results);
-            radioGroup.setVisibility(View.GONE);
-            screenTitle.setText("Voting Result");
-            submit.setVisibility(View.GONE);
-
-
-            voteResult1.setVisibility(View.VISIBLE);
-            voteResult2.setVisibility(View.VISIBLE);
-            goBack.setVisibility(View.VISIBLE);
-
             voteResult1.setText(answer1.getText().toString()+ ": "+results.get(1));
             voteResult2.setText(answer2.getText().toString()+ ": "+results.get(2));
 
-        }
+
 
 
         return voted;
 
+    }
+
+    private void showResults() {
+        radioGroup.setVisibility(View.GONE);
+        screenTitle.setText("Voting Result");
+        submit.setVisibility(View.GONE);
+
+
+        voteResult1.setVisibility(View.VISIBLE);
+        voteResult2.setVisibility(View.VISIBLE);
+        goBack.setVisibility(View.VISIBLE);
     }
 }

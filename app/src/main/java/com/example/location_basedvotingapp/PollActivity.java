@@ -164,8 +164,9 @@ public class PollActivity extends AppCompatActivity {
 
                         if (id!=-1){
                             Intent intent = new Intent(PollActivity.this, votePoll.class);
-                            intent.putExtra(POLL_ID,id);
                             intent.putExtra(USER_ID,userID);
+
+                            intent.putExtra(POLL_ID,id);
                             startActivity(intent);
 
                         }

@@ -247,13 +247,16 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
 
 
                         int id = db.getPollId(title);
+                        System.out.println(id);
 
+                        System.out.println("poll title: "+title);
 
 
                         if (id!=-1){
                             Intent intent = new Intent(Homescreen.this, votePoll.class);
-                            intent.putExtra(POLL_ID,id);
+
                             intent.putExtra(USER_ID,userID);
+                            intent.putExtra(POLL_ID,id);
                             startActivity(intent);
 
                         }

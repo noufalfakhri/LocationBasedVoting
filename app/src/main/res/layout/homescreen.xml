@@ -17,18 +17,11 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="top"
+            android:gravity="center_vertical"
             android:layout_height="wrap_content">
 
             <!-- TODO: Update blank fragment layout -->
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="100dp"
-
-                    android:layout_gravity="center_horizontal" />
 
         </RelativeLayout>
 
@@ -41,6 +34,14 @@
             android:text="Welcome To Polls"
             android:textSize="20dp"
             android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+
+            android:layout_marginTop="100dp" />
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

@@ -9,11 +9,11 @@
 
     <TextView
         android:id="@+id/votePollTitle"
-        android:layout_width="290dp"
+        android:layout_width="wrap_content"
         android:layout_height="71dp"
-        android:layout_marginStart="128dp"
-        android:layout_marginTop="56dp"
-        android:gravity="top"
+        android:layout_marginStart="172dp"
+        android:layout_marginTop="52dp"
+        android:gravity="center_horizontal"
         android:text="Vote"
         android:textSize="30dp"
         android:textStyle="bold"
@@ -107,5 +107,15 @@
         android:text="Go Back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/deleteView"
+        android:layout_width="33dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="64dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_delete_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
