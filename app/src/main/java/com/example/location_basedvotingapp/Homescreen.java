@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,8 +40,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import static com.example.location_basedvotingapp.DBHelper.POLL_ID;
+import static com.example.location_basedvotingapp.DBHelper.POLL_LAG;
+import static com.example.location_basedvotingapp.DBHelper.POLL_LAT;
 import static com.example.location_basedvotingapp.DBHelper.POLL_OWNER;
 import static com.example.location_basedvotingapp.DBHelper.POLL_TITLE;
+import static com.example.location_basedvotingapp.DBHelper.TABLE_POLL;
+import static com.example.location_basedvotingapp.DBHelper.USER_ID;
 
 public class Homescreen extends AppCompatActivity implements LocationListener {
 
@@ -59,6 +66,7 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
     ArrayList pollOwners = new ArrayList<>(Arrays.asList("Nouf", "Sarah", "Noura", "Reema", "Ghada",
             "Abeer", "Reem", "Arwa"));
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,10 +75,18 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
         Bundle extras = getIntent().getExtras();
         userID = extras.getInt("userID");
 
-        //checkLocationPermission();
-        //setUserLocation();
-        getPolls();
-        setList();
+        checkLocationPermission();
+        setUserLocation();
+        try {
+            getPolls();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            setList();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         BottomNavigation();
 
 
@@ -206,7 +222,7 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
 
     }
 
-        void setList(){
+        void setList() throws IOException {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         // Setting the layout as linear
         // layout for vertical orientation
@@ -218,10 +234,49 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
 
         // Setting Adapter to RecyclerView
         recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        Toast.makeText(Homescreen.this,"ok" , Toast.LENGTH_LONG).show();
+                        TextView titleText  = (TextView) view.findViewById(R.id.pollTitle);
+                        String title = titleText.getText().toString();
+
+                        TextView ownerText  = (TextView) view.findViewById(R.id.pollOwner);
+                        String owner = titleText.getText().toString();
+                        System.out.println(owner);
+
+
+                        int id = db.getPollId(title);
+                        System.out.println(id);
+
+                        System.out.println("poll title: "+title);
+
+
+                        if (id!=-1){
+                            Intent intent = new Intent(Homescreen.this, votePoll.class);
+
+                            intent.putExtra(USER_ID,userID);
+                            intent.putExtra(POLL_ID,id);
+                            startActivity(intent);
+
+                        }
+                        else
+                        Toast.makeText(Homescreen.this,"Poll not available" , Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                }));
+
+         adapter.notifyDataSetChanged();
+
+
     }
 
 
-        void getPolls() {
+        void getPolls() throws IOException {
             System.out.println("in getting polls");
 
             db = new DBHelper(this);
@@ -251,25 +306,11 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
     System.out.println(lat+" latitude");
         System.out.println(lag+" longitude");
 
-        try {
-            System.out.println(retrieveAddressLine(0,lat,lag));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
 
-    public String retrieveAddressLine(int pollId, double lat, double lag ) throws IOException {
 
-        //get poll coordinates
-
-        Geocoder myLocation = new Geocoder(this, Locale.getDefault());
-        List<Address> myList = myLocation.getFromLocation(24.683815,46.667077, 1);
-        Address address = (Address) myList.get(0);
-        String addressStr = "";
-        addressStr += address.getSubLocality() ;
-
-
-        return addressStr;
-    }
 }
+
+

@@ -243,7 +243,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
            // if (res.getInt(res.getColumnIndex(POLL_RESPONDER)) != user)  // user has already voted for this poll
 
-                if(res.getString(res.getColumnIndex(POLL_ID)) != null) {// if poll exists
+                if(res.getInt(res.getColumnIndex(POLL_ID)) != -1) {// if poll exists
 
 
                     HashMap< String, String> poll = new HashMap<>();
@@ -251,7 +251,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     int owner = res.getInt(res.getColumnIndex(POLL_OWNER));
 
                     poll.put(POLL_TITLE, title);
-                   // poll.put(POLL_OWNER,"nouf");
                     poll.put(POLL_OWNER, getPollOwner(owner));
 
 
@@ -300,6 +299,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 HashMap< String, String> poll = new HashMap<>();
                 String title = res.getString(res.getColumnIndex(POLL_TITLE));
+                String owner = res.getString(res.getColumnIndex(POLL_OWNER));
 
                 double lat = res.getDouble(res.getColumnIndex(POLL_LAT));
                 double lag = res.getDouble(res.getColumnIndex(POLL_LAG));
@@ -307,7 +307,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 String location = retrieveAddressLine(lat/100000,lag);
                 poll.put(POLL_TITLE, title);
 
-                poll.put(POLL_OWNER, location);
+                poll.put(POLL_OWNER, " ");
 
 
                 polls.add(poll);
@@ -330,6 +330,56 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
         return addressStr;
+    }
+
+
+    public int getPollId(String title){
+        int id = -1;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res =  db.rawQuery("  SELECT * FROM "+TABLE_POLL+" WHERE "+POLL_TITLE+" = '"+title+"'",null);
+
+        res.moveToFirst();
+
+        if (res.getCount() > 0 )
+            id = res.getInt(res.getColumnIndex(POLL_ID));
+        System.out.println("Poll ID: "+id);
+        return id;
+    }
+
+    public HashMap<Integer,Integer> getPollResult (int pollID ){
+
+        HashMap<Integer,Integer> results = new  HashMap<Integer,Integer>();
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res =  db.rawQuery("  SELECT "+POLL_ANSWER+" , COUNT("+POLL_ANSWER+") FROM "+TABLE_RESPONSE+" WHERE "+RESPONSE_POLLID+" = '"+pollID+"' GROUP BY "+POLL_ANSWER+" ORDER BY COUNT ("+POLL_ANSWER+") DESC",null);
+        res.moveToFirst();
+
+
+
+        int answer1Result = 0;
+        int answer2Result = 0;
+
+        while(res.isAfterLast()==false) {
+            if (res.getInt(res.getColumnIndex(POLL_ANSWER)) == 1)
+                answer1Result = res.getInt(res.getColumnIndex("COUNT(" + POLL_ANSWER + ")"));
+            else
+                answer2Result = res.getInt(res.getColumnIndex("COUNT(" + POLL_ANSWER + ")"));
+            res.moveToNext();
+        }
+
+        System.out.println("answer1 = "+ answer1Result);
+        System.out.println("answer2 = "+ answer2Result);
+
+        results.put(1,answer1Result);
+        results.put(2,answer2Result);
+
+        return results;
+    }
+
+    public Integer deletePoll (int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_POLL, POLL_ID+ " = " +id,null);
     }
 
 
