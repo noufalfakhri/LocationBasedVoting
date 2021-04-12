@@ -1,6 +1,8 @@
 package com.example.location_basedvotingapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,7 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class SettingsActivity extends AppCompatActivity {
-
+    Boolean isMuted =false;
+    Button mute;
     Button signOut ;
     int userID=0;
     private TextView mTextView;
@@ -24,6 +27,28 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         signOut = (Button) findViewById(R.id.SignOutbutton);
+        mute = (Button) findViewById(R.id.mute);
+
+        mute.setOnClickListener( new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(isMuted){
+                    AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                    audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                    mute.setText("unmute");
+                    isMuted=false;
+                }
+                else{
+                    AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                    int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+
+                    audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                    audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_SHOW_UI + AudioManager.FLAG_PLAY_SOUND);
+                    mute.setText("mute");
+                    isMuted=true;
+                }
+            }
+        });
 
         signOut.setOnClickListener(new View.OnClickListener() {
             @Override

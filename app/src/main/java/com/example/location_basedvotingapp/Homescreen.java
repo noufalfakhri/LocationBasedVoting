@@ -67,8 +67,8 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
         Bundle extras = getIntent().getExtras();
         userID = extras.getInt("userID");
 
-        checkLocationPermission();
-        setUserLocation();
+        //checkLocationPermission();
+        //setUserLocation();
         getPolls();
         setList();
         BottomNavigation();
