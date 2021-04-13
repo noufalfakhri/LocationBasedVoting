@@ -44,7 +44,9 @@
                 android:layout_marginVertical="30dp"
                 android:gravity="center_horizontal"
                 android:text="My Polls"
-                android:textSize="30dp" />
+                android:textSize="35dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
+                />
         </RelativeLayout>
 
 

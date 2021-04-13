@@ -41,8 +41,10 @@ public class votePoll extends AppCompatActivity {
     RadioGroup radioGroup;
     HashMap<Integer,Integer> results;
     Button submit;
-    Button goBack;
+
     ImageView delete;
+    ImageView goBack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +52,7 @@ public class votePoll extends AppCompatActivity {
 
         db = new DBHelper(this);
         Bundle extras = getIntent().getExtras();
-        userID = extras.getInt(USER_ID);
+        userID = extras.getInt("userID");
         pollID = extras.getInt(POLL_ID);
 
         System.out.println(pollID +"< in create");
@@ -61,7 +63,7 @@ public class votePoll extends AppCompatActivity {
         answer1 = (RadioButton) findViewById(R.id.answer1);
         answer2 = (RadioButton) findViewById(R.id.answer2);
         submit = (Button) findViewById(R.id.submitButton) ;
-        goBack = (Button) findViewById(R.id.backButton) ;
+        goBack = (ImageView) findViewById(R.id.backImage) ;
         delete = (ImageView)  findViewById(R.id.deleteView);
         radioGroup = (RadioGroup) findViewById(R.id.answerGroup);
         voteResult1 = (TextView) findViewById(R.id.voteResult1);
@@ -111,7 +113,7 @@ public class votePoll extends AppCompatActivity {
 
         SQLiteDatabase db_ = db.getWritableDatabase();
         Cursor res =  db_.rawQuery("  SELECT * FROM "+TABLE_POLL+" WHERE "+POLL_ID+" = "+pollID+" AND "+POLL_OWNER+" = "+userID,null);
-        if (res != null || res.getCount() >0) {
+        if (res != null && res.getCount() >0) {
             isOwner = true;
             delete.setVisibility(View.VISIBLE);
         }

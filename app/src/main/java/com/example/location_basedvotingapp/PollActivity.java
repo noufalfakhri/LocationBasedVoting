@@ -1,6 +1,7 @@
 package com.example.location_basedvotingapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import static com.example.location_basedvotingapp.DBHelper.POLL_ID;
 import static com.example.location_basedvotingapp.DBHelper.POLL_OWNER;
 import static com.example.location_basedvotingapp.DBHelper.POLL_TITLE;
 import static com.example.location_basedvotingapp.DBHelper.USER_ID;
+import static com.example.location_basedvotingapp.MainActivity.MyPREFERENCES;
 
 public class PollActivity extends AppCompatActivity {
 
@@ -46,7 +48,7 @@ public class PollActivity extends AppCompatActivity {
             "Hessa", "Reem", "Hessa"));
 
     int userID = 0;
-
+    SharedPreferences sharedpreferences;
     public static final int msg_request = 1;
 
     @Override
@@ -54,13 +56,48 @@ public class PollActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll);
 
-        Bundle extras = getIntent().getExtras();
-        userID = extras.getInt("userID");
 
         mTextView = (TextView) findViewById(R.id.text);
         buttonView = (Button) findViewById(R.id.button);
         titles = new ArrayList<String>();
         owners = new ArrayList<String>();
+        setNavigation();
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);
+        userID = sharedpreferences.getInt("userID",0);
+        System.out.println("user ID = "+userID);
+        System.out.println("on start user ID "+ userID);
+
+        try {
+            getPolls();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            setList();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        buttonView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("ssd", "onClick: Add poll");
+
+                Intent intent = new Intent (getApplicationContext() , AddPoll.class);
+                intent.putExtra("userID", userID);
+
+                startActivityForResult(intent, msg_request);
+                finish();
+
+            }
+        });
+
+
+    }
+
+
+
+    private void setNavigation() {
         BottomNavigationView nav = findViewById(R.id.bottom_navigation);
         nav.setSelectedItemId(R.id.Polls);
         nav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -73,6 +110,7 @@ public class PollActivity extends AppCompatActivity {
                         intent = new Intent(getApplicationContext(), Homescreen.class);
                         intent.putExtra("userID", userID);
                         startActivity(intent);
+                        finish();
                         overridePendingTransition(0,0);
 
                         return true;
@@ -80,6 +118,7 @@ public class PollActivity extends AppCompatActivity {
                         intent = new Intent(getApplicationContext(), SettingsActivity.class);
                         intent.putExtra("userID", userID);
                         startActivity(intent);
+                        finish();
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.Polls:
@@ -88,33 +127,33 @@ public class PollActivity extends AppCompatActivity {
                 return false;
             }
         });
-        buttonView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i("ssd", "onClick: Add poll");
+    }
 
-                Intent intent = new Intent (getApplicationContext() , AddPoll.class);
-                intent.putExtra("userID", userID);
 
-                startActivityForResult(intent, msg_request);
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        sharedpreferences = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);
+//        userID = sharedpreferences.getInt("userID",0);
+//        System.out.println("user ID = "+userID);
+//        System.out.println("on start user ID "+ userID);
+//
+//        try {
+//            getPolls();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            setList();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-            }
-        });
 
-        try {
-            getPolls();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            setList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     void getPolls() throws IOException {
-        System.out.println("in getting polls");
+        System.out.println("in getting polls of users id = "+userID);
 
         db = new DBHelper(this);
 
@@ -164,8 +203,7 @@ public class PollActivity extends AppCompatActivity {
 
                         if (id!=-1){
                             Intent intent = new Intent(PollActivity.this, votePoll.class);
-                            intent.putExtra(USER_ID,userID);
-
+                            intent.putExtra("userID",userID);
                             intent.putExtra(POLL_ID,id);
                             startActivity(intent);
 

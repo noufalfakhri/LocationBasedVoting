@@ -324,9 +324,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Geocoder myLocation = new Geocoder(context, Locale.getDefault());
         List<Address> myList = myLocation.getFromLocation(lat,lag, 1);
-        Address address = (Address) myList.get(0);
         String addressStr = "";
+        try{
+        Address address = (Address) myList.get(0);
+
         addressStr += address.getSubLocality() ;
+    }catch (IndexOutOfBoundsException e){
+        System.out.println(e);
+    }
 
 
         return addressStr;

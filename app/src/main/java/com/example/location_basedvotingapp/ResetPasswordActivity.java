@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,19 +21,27 @@ public class ResetPasswordActivity extends AppCompatActivity {
     DBHelper dbHelper;
 
     Boolean HasUpperCase = false, HasNumber = false;
+    ImageView goBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
         dbHelper = new DBHelper(ResetPasswordActivity.this);
-
+        goBack = (ImageView) findViewById(R.id.backImage) ;
         text_input_layout_1 = (TextInputLayout) findViewById(R.id.text_input_layout_1);
         text_input_layout_2 = (TextInputLayout) findViewById(R.id.text_input_layout_2);
         edit_email = (TextInputEditText) findViewById(R.id.edit_email);
         edit_password = (TextInputEditText) findViewById(R.id.edit_password);
         btn_reset = (Button) findViewById(R.id.btn_reset);
 
+
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         btn_reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

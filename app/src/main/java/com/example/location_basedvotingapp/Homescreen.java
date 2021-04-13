@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -47,6 +48,7 @@ import static com.example.location_basedvotingapp.DBHelper.POLL_OWNER;
 import static com.example.location_basedvotingapp.DBHelper.POLL_TITLE;
 import static com.example.location_basedvotingapp.DBHelper.TABLE_POLL;
 import static com.example.location_basedvotingapp.DBHelper.USER_ID;
+import static com.example.location_basedvotingapp.MainActivity.MyPREFERENCES;
 
 public class Homescreen extends AppCompatActivity implements LocationListener {
 
@@ -59,12 +61,12 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
     int userID =0;
     protected LocationManager locationManager;
     protected LocationListener locationListener;
+    TextView noNearbyPolls;
+    SharedPreferences sharedpreferences;
 
 
-    ArrayList pollTitles = new ArrayList<>(Arrays.asList("Poll 1", "Poll 2", "Poll3", "Poll 4", "Poll 5",
-            "Poll 6 ", "Poll 7 ", "Poll 8"));
-    ArrayList pollOwners = new ArrayList<>(Arrays.asList("Nouf", "Sarah", "Noura", "Reema", "Ghada",
-            "Abeer", "Reem", "Arwa"));
+    ArrayList pollTitles = new ArrayList<>();
+    ArrayList pollOwners = new ArrayList<>();
 
 
     @Override
@@ -72,8 +74,12 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homescreen);
 
-        Bundle extras = getIntent().getExtras();
-        userID = extras.getInt("userID");
+        noNearbyPolls = (TextView) findViewById(R.id.noNearbyPolls);
+        noNearbyPolls.setVisibility(View.GONE);
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);
+        userID = sharedpreferences.getInt("userID",0);
+        System.out.println("user ID = "+userID);
 
         checkLocationPermission();
         setUserLocation();
@@ -81,11 +87,14 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
             getPolls();
         } catch (IOException e) {
             e.printStackTrace();
+            noNearbyPolls.setVisibility(View.VISIBLE);
+
         }
         try {
             setList();
         } catch (IOException e) {
             e.printStackTrace();
+            noNearbyPolls.setVisibility(View.VISIBLE);
         }
         BottomNavigation();
 
@@ -205,14 +214,16 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
                             return true;
                         case R.id.Settings:
                             intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                            intent.putExtra("userID", userID);
+                            //intent.putExtra("userID", userID);
                             startActivity(intent);
+                            finish();
                             overridePendingTransition(0,0);
                             return true;
                         case R.id.Polls:
                              intent = new Intent(getApplicationContext(), PollActivity.class);
-                            intent.putExtra("userID", userID);
+                          //  intent.putExtra("userID", userID);
                             startActivity(intent);
+                            finish();
                             overridePendingTransition(0,0);
                             return true;
                     }
@@ -223,6 +234,10 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
     }
 
         void setList() throws IOException {
+
+        if (pollTitles.size()==0) //checking if there are no polls
+            return;
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         // Setting the layout as linear
         // layout for vertical orientation
@@ -255,7 +270,7 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
                         if (id!=-1){
                             Intent intent = new Intent(Homescreen.this, votePoll.class);
 
-                            intent.putExtra(USER_ID,userID);
+                            intent.putExtra("userID",userID);
                             intent.putExtra(POLL_ID,id);
                             startActivity(intent);
 
@@ -286,7 +301,10 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
 
             ArrayList<String> titles = new ArrayList<String>();
             ArrayList<String> owners = new ArrayList<String>();
-
+            if (polls.size()==0) {
+                noNearbyPolls.setVisibility(View.VISIBLE);
+                return;
+            }
             for (int i = 0; i < polls.size(); i++) {
                 titles.add(polls.get(i).get(POLL_TITLE));
                 owners.add(polls.get(i).get(POLL_OWNER));

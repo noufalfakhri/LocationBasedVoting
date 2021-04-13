@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textSize="30sp"
         android:textColor="#000"
-        android:text="Login Page"
+        android:text="Login "
         android:gravity="center"
         android:layout_marginTop="100dp"
         android:id="@+id/txt_1"/>
@@ -72,36 +72,40 @@
 </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Login"
         android:id="@+id/btn_login"
-        app:layout_constraintTop_toBottomOf="@id/text_input_layout_2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:textAllCaps="false"
         app:layout_constraintBottom_toTopOf="@id/txt_2"
-        android:textAllCaps="false"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_input_layout_2"
+        app:layout_constraintVertical_bias="0.166" />
 
     <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:textSize="15sp"
-        android:textColor="#000"
-        android:text="Forgot Password? Reset It"
-        android:gravity="center"
         android:id="@+id/txt_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="56dp"
+        android:gravity="center"
+        android:text="Forgot Password? Reset It"
+        android:textColor="#000"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@id/txt_3"
-        android:layout_marginBottom="25dp"/>
+        tools:layout_editor_absoluteX="0dp" />
 
     <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:textSize="15sp"
-        android:textColor="#000"
-        android:text="Register Now"
-        android:gravity="center"
         android:id="@+id/txt_3"
-        android:layout_marginBottom="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="84dp"
+        android:gravity="center"
+        android:text="Register Now"
+        android:textColor="#000"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

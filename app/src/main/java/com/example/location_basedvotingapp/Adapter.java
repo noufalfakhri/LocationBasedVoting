@@ -104,13 +104,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         double lat_ = res.getDouble(res.getColumnIndex(POLL_LAT));
         double lag_ = res.getDouble(res.getColumnIndex(POLL_LAG));
-
-        Geocoder myLocation = new Geocoder(context, Locale.getDefault());
-        List<Address> myList = myLocation.getFromLocation(lat_/100000,lag_, 1);
-        Address address = (Address) myList.get(0);
         String addressStr = "";
-        addressStr += address.getSubLocality() ;
+        Geocoder myLocation = new Geocoder(context, Locale.getDefault());
+        List<Address> myList = myLocation.getFromLocation(lat_/1000000,lag_, 1);
+      try {
+          Address address = (Address) myList.get(0);
 
+          addressStr += address.getSubLocality();
+      }catch (IndexOutOfBoundsException e){
+          System.out.println(e);
+      }
 
         return addressStr;
     }

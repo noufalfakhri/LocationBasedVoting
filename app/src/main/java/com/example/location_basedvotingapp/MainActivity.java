@@ -2,7 +2,9 @@ package com.example.location_basedvotingapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     TextView txt_2, txt_3;
 
     DBHelper dbHelper;
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences sharedpreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         dbHelper = new DBHelper(MainActivity.this);
 
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         text_input_layout_1 = (TextInputLayout) findViewById(R.id.text_input_layout_1);
         text_input_layout_2 = (TextInputLayout) findViewById(R.id.text_input_layout_2);
         edit_email = (TextInputEditText) findViewById(R.id.edit_email);
@@ -70,7 +75,11 @@ public class MainActivity extends AppCompatActivity {
                 int userID = dbHelper.checkEmailAndPassword(edit_email.getText().toString(), edit_password.getText().toString());
                 if (userID != -1) {
                     Intent intent = new Intent(MainActivity.this, Homescreen.class);
-                    intent.putExtra("userID", userID);
+                  //  intent.putExtra("userID", userID);
+
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    editor.putInt("userID", userID);
+                    editor.commit();
                     startActivity(intent);
                     finish();
                 } else {

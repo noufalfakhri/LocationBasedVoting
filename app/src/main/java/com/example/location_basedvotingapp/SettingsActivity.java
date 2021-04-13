@@ -60,6 +60,16 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         mTextView = (TextView) findViewById(R.id.text);
+        setNavigation();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setNavigation();
+    }
+
+    private void setNavigation() {
         BottomNavigationView nav = findViewById(R.id.bottom_navigation);
 
         nav.setSelectedItemId(R.id.Settings);

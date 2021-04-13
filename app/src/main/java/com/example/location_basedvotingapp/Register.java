@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ public class Register extends AppCompatActivity {
     TextInputEditText edit_name, edit_email, edit_password;
     Button btn_register;
     TextView txt_2;
+    ImageView goBack;
 
     Boolean HasUpperCase = false, HasNumber = false;
 
@@ -31,7 +33,7 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.register);
 
         dbHelper = new DBHelper(Register.this);
-
+        goBack = (ImageView) findViewById(R.id.backImage) ;
         text_input_layout_1 = (TextInputLayout) findViewById(R.id.text_input_layout_1);
         text_input_layout_2 = (TextInputLayout) findViewById(R.id.text_input_layout_2);
         text_input_layout_3 = (TextInputLayout) findViewById(R.id.text_input_layout_3);
@@ -40,6 +42,13 @@ public class Register extends AppCompatActivity {
         edit_password = (TextInputEditText) findViewById(R.id.edit_password);
         btn_register = (Button) findViewById(R.id.btn_register);
         txt_2 = (TextView) findViewById(R.id.txt_2);
+
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override

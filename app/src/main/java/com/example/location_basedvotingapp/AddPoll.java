@@ -9,6 +9,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 //import android.database.Cursor;
 //import android.database.sqlite.SQLiteDatabase;
@@ -23,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -34,9 +36,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import static com.example.location_basedvotingapp.MainActivity.MyPREFERENCES;
+
 
 public class AddPoll extends AppCompatActivity {
-    Button backButton;
+    ImageView goBack;
     Button addButton;
     private TextView question;
     private TextView answer1;
@@ -56,6 +60,7 @@ public class AddPoll extends AppCompatActivity {
 
     private int year, month, day, hour, min;
     private Calendar calendar;
+    SharedPreferences sharedpreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +68,7 @@ public class AddPoll extends AppCompatActivity {
         setContentView(R.layout.activity_addpoll);
         System.out.println("oncreate");
         Log.i("ssd", "oncreate");
-        backButton = (Button) findViewById(R.id.back);
+        goBack = (ImageView) findViewById(R.id.backImage);
         addButton = (Button) findViewById(R.id.add);
         question = (TextView) findViewById(R.id.question);
         answer1 = (TextView) findViewById(R.id.answer1);
@@ -85,9 +90,9 @@ public class AddPoll extends AppCompatActivity {
         showTime(hour, min);
         showDate(year, month + 1, day);
 
-        Bundle extras = getIntent().getExtras();
-        userID = extras.getInt("userID");
-
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);
+        userID = sharedpreferences.getInt("userID",0);
+        System.out.println("user ID = "+userID);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -147,7 +152,7 @@ public class AddPoll extends AppCompatActivity {
             }
         });
 
-        backButton.setOnClickListener(new View.OnClickListener() {
+        goBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
