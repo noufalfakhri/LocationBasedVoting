@@ -1,5 +1,9 @@
 package com.example.location_basedvotingapp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -13,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Calendar;
 import java.util.HashMap;
 
 import static com.example.location_basedvotingapp.DBHelper.POLL_ANSWER1;
@@ -32,7 +37,7 @@ public class votePoll extends AppCompatActivity {
     int pollID = 0 ;
     DBHelper db;
     int userID = 0;
-    TextView pollTitle;
+    static TextView pollTitle;
     TextView screenTitle;
     TextView voteResult1;
     TextView voteResult2;
@@ -41,6 +46,9 @@ public class votePoll extends AppCompatActivity {
     RadioGroup radioGroup;
     HashMap<Integer,Integer> results;
     Button submit;
+
+    private NotificationHelper mNotificationHelper;
+    private Calendar calendar;
 
     ImageView delete;
     ImageView goBack;
@@ -56,7 +64,6 @@ public class votePoll extends AppCompatActivity {
         pollID = extras.getInt(POLL_ID);
 
         System.out.println(pollID +"< in create");
-
         pollTitle = (TextView) findViewById(R.id.pollQuestion);
         screenTitle = (TextView) findViewById(R.id.votePollTitle);
 
@@ -72,6 +79,10 @@ public class votePoll extends AppCompatActivity {
         voteResult2.setVisibility(View.GONE);
         delete.setVisibility((View.GONE));
 
+        mNotificationHelper = new NotificationHelper(this);
+        calendar = Calendar.getInstance();
+        System.out.println('1');
+        sendOnChannel1();
 
         getPoll();
         hasAlreadyVoted();
@@ -92,7 +103,7 @@ public class votePoll extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int answer = radioGroup.getCheckedRadioButtonId() == R.id.answer1? 1:2;
-            db.createResponse(pollID,userID,answer);
+                db.createResponse(pollID,userID,answer);
                 Toast.makeText(votePoll.this,"You have voted successfully!", Toast.LENGTH_LONG).show();
                 finish();
             }
@@ -101,15 +112,15 @@ public class votePoll extends AppCompatActivity {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            db.deletePoll(pollID);
-            finish();
+                db.deletePoll(pollID);
+                finish();
             }
         });
 
     }
 
     private boolean userIsOwner() {
-       boolean isOwner = false;
+        boolean isOwner = false;
 
         SQLiteDatabase db_ = db.getWritableDatabase();
         Cursor res =  db_.rawQuery("  SELECT * FROM "+TABLE_POLL+" WHERE "+POLL_ID+" = "+pollID+" AND "+POLL_OWNER+" = "+userID,null);
@@ -119,7 +130,7 @@ public class votePoll extends AppCompatActivity {
         }
 
 
-       return isOwner;
+        return isOwner;
     }
 
     private void getPoll() {
@@ -128,22 +139,22 @@ public class votePoll extends AppCompatActivity {
         Cursor res =  db_.rawQuery("  SELECT * FROM "+TABLE_POLL+" WHERE "+POLL_ID+" = "+pollID+"",null);
 
         if (res != null) {
-           res.moveToFirst();
+            res.moveToFirst();
 
-           String title = res.getString(res.getColumnIndex(POLL_TITLE));
+            String title = res.getString(res.getColumnIndex(POLL_TITLE));
             System.out.println("poll title = "+title);
 
             String A1 = res.getString(res.getColumnIndex(POLL_ANSWER1));
-           String A2 = res.getString(res.getColumnIndex(POLL_ANSWER2));
+            String A2 = res.getString(res.getColumnIndex(POLL_ANSWER2));
 
-           System.out.println(A1);
+            System.out.println(A1);
             System.out.println(A2);
 
 
             pollTitle.setText(title);
-           answer1.setText(A1);
-           answer2.setText(A2);
-       }
+            answer1.setText(A1);
+            answer2.setText(A2);
+        }
 
     }
 
@@ -156,10 +167,10 @@ public class votePoll extends AppCompatActivity {
         if (res.getCount() >0) {
             voted = true;
         }
-            results = db.getPollResult(pollID);
-            System.out.println(results);
-            voteResult1.setText(answer1.getText().toString()+ ": "+results.get(1));
-            voteResult2.setText(answer2.getText().toString()+ ": "+results.get(2));
+        results = db.getPollResult(pollID);
+        System.out.println(results);
+        voteResult1.setText(answer1.getText().toString()+ ": "+results.get(1));
+        voteResult2.setText(answer2.getText().toString()+ ": "+results.get(2));
 
 
 
@@ -177,5 +188,29 @@ public class votePoll extends AppCompatActivity {
         voteResult1.setVisibility(View.VISIBLE);
         voteResult2.setVisibility(View.VISIBLE);
         goBack.setVisibility(View.VISIBLE);
+    }
+
+    public void sendOnChannel1(){
+        //Calendar c, int id
+        System.out.println('2');
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent1 = new Intent(this,NotificationPublisher.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,1 ,intent1,0);
+
+        System.out.println('3');
+//
+        if (calendar.before(Calendar.getInstance())) {
+            calendar.add(Calendar.DATE, 1);
+            System.out.println('4');
+        }
+        System.out.println('5');
+        System.out.println(calendar.getTimeInMillis());
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP,1000,pendingIntent);
+        System.out.println('6');
+    }
+
+    public static String getTit(){
+
+        return  pollTitle.getText().toString();
     }
 }

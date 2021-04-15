@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LocationBasedVotingApp">
+
         <activity android:name=".votePoll"></activity>
         <activity android:name=".ResetPasswordActivity" />
         <activity
@@ -33,6 +34,7 @@
         <activity android:name=".Homescreen" />
         <activity android:name=".Register" />
         <activity android:name=".AddPoll" />
+        <receiver android:name=".NotificationPublisher" />
     </application>
 
 </manifest>

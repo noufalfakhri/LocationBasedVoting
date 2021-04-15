@@ -81,8 +81,8 @@ public class Homescreen extends AppCompatActivity implements LocationListener {
         userID = sharedpreferences.getInt("userID",0);
         System.out.println("user ID = "+userID);
 
-        checkLocationPermission();
-        setUserLocation();
+        //checkLocationPermission();
+       // setUserLocation();
         try {
             getPolls();
         } catch (IOException e) {
