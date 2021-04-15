@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@drawable/custom_background"
     android:layout_height="match_parent"
     tools:context=".Homescreen">
 
@@ -27,12 +28,14 @@
 
         <TextView
             android:id="@+id/TitleHomescreen"
+            android:fontFamily="monospace"
+            android:textColor="#FFFF"
+            android:textSize="35sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="50dp"
             android:text="Welcome To Polls"
-            android:textSize="35dp"
             android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
             />
