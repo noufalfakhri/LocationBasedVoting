@@ -33,6 +33,10 @@
         <activity android:name=".Homescreen" />
         <activity android:name=".Register" />
         <activity android:name=".AddPoll" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
